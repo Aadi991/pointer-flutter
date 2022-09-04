@@ -6,13 +6,13 @@ import '../Colours.dart';
 class LearnerListWidget extends StatefulWidget {
   Function onPressed;
   Function onLongPress;
-  Learner clickedStudent;
+  Learner clickedLearner;
 
   LearnerListWidget(
       {Key? key,
       required this.onPressed,
       required this.onLongPress,
-      required this.clickedStudent})
+      required this.clickedLearner})
       : super(key: key);
 
   @override
@@ -40,7 +40,7 @@ class _LearnerListWidgetState extends State<LearnerListWidget> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Image.asset(
-              'images/student.png',
+              widget.clickedLearner.isBoy?"images/boy.png":"images/girl.png",
               height: 120,
               width: 120,
             ),
@@ -48,14 +48,14 @@ class _LearnerListWidgetState extends State<LearnerListWidget> {
               height: 10,
             ),
             Text(
-              widget.clickedStudent.fullName??'',
+              widget.clickedLearner.fullName,
               style: TextStyle(fontSize: 20),
             ),
             SizedBox(
               height: 10,
             ),
             Text(
-              widget.clickedStudent.age.toString(),
+              widget.clickedLearner.age.toString(),
               style: TextStyle(fontSize: 20),
             ),
             SizedBox(
@@ -71,7 +71,7 @@ class _LearnerListWidgetState extends State<LearnerListWidget> {
                   width:10
                 ),
                 Text(
-                  widget.clickedStudent.homePoints.toString(),
+                  widget.clickedLearner.homePoints.toString(),
                   style: TextStyle(fontSize: 20),
                 ),],
             ),

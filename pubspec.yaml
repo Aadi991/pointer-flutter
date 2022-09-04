@@ -12,7 +12,6 @@ dependencies:
 
   cupertino_icons: ^1.0.2
   pin_entry_text_field: ^0.1.4
-  firebase_core: ^1.4.0
   intl_phone_number_input: ^0.7.0+2
   pin_code_fields: ^7.2.0
   fluttertoast: ^8.0.7
@@ -20,6 +19,7 @@ dependencies:
   shared_preferences: ^2.0.15
   intl: ^0.17.0
   flutterfire_ui: ^0.4.2+2
+  firebase_core: ^1.4.0
   firebase_auth: ^3.4.1
   google_sign_in: ^5.4.0
 
@@ -38,3 +38,7 @@ flutter:
         - asset: fonts/Quicksand-Medium.ttf
         - asset: fonts/Quicksand-Light.ttf
         - asset: fonts/Quicksand-Bold.ttf
+
+  assets:
+    - images/
+    - images/ranks/

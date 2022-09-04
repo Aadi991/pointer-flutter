@@ -6,11 +6,9 @@ import 'package:pointer_v2/Storage/StorageStructure/HistoryList.dart';
 import 'package:pointer_v2/Storage/StorageStructure/Learner.dart';
 import 'package:pointer_v2/Storage/StorageStructure/LearnerList.dart';
 
-import 'StorageStructure/ChildRank.dart';
 import 'StorageStructure/Parent.dart';
 
 class CloudFirestoreControl {
-  static const String TAG = "CloudFirestoreControl";
   FirebaseFirestore db = FirebaseFirestore.instance;
   static const String keyFullName = "Full Name";
   static const String keyScreenName = "Screen Name";
@@ -88,19 +86,23 @@ class CloudFirestoreControl {
         .doc(phoneNo)
         .collection("Learners")
         .get();
-    final allData = snap.docs.map((doc) => doc.data()).toList();
-    for (final e in allData) {
-      Map<String, dynamic> data = e as Map<String, dynamic>;
-      got.learnerList.add(Learner.fromMap(data));
+    if (snap.docs.isEmpty) {
+      return LearnerList.empty();
+    } else {
+      final allData = snap.docs.map((doc) => doc.data()).toList();
+      for (final e in allData) {
+        Map<String, dynamic> data = e;
+        got.learnerList.add(Learner.fromMap(data));
+      }
+      return got;
     }
-    return got;
   }
 
   void setLearner(Learner toSave) {
     db
         .collection("Parents")
         .doc(toSave.parentsID)
-        .collection("Students")
+        .collection("Learners")
         .doc(toSave.screenName)
         .withConverter<Learner>(
             fromFirestore: Learner.fromFirestore,
@@ -116,18 +118,25 @@ class CloudFirestoreControl {
       db
           .collection("Parents")
           .doc(old.parentsID)
-          .collection("Students")
+          .collection("Learners")
           .doc(old.screenName)
           .delete();
       db
           .collection("Parents")
           .doc(toSave.parentsID)
-          .collection("Students")
+          .collection("Learners")
           .doc(toSave.screenName)
           .withConverter<Learner>(
               fromFirestore: Learner.fromFirestore,
               toFirestore: (model, _) => model.toFirestore())
           .set(toSave);
+    }else{
+      db
+          .collection("Parents")
+          .doc(toSave.parentsID)
+          .collection("Learners")
+          .doc(toSave.screenName)
+          .update(toSave.toFirestore());
     }
   }
 
@@ -135,7 +144,7 @@ class CloudFirestoreControl {
     Learner got = (await db
             .collection("Parents")
             .doc(parentsID)
-            .collection("Students")
+            .collection("Learners")
             .doc(screenName)
             .withConverter<Learner>(
                 fromFirestore: Learner.fromFirestore,
@@ -156,26 +165,40 @@ class CloudFirestoreControl {
   Future<ActionList> getActionList(
       String parentID, String learnerScreenName) async {
     ActionList got = ActionList.empty();
+    /*print("Getting action list");
+    print("ParentID $parentID");
+    print("Screen Name $learnerScreenName");
+    print("Path ${db
+        .collection("Parents")
+        .doc(parentID)
+        .collection("Learners")
+        .doc(learnerScreenName)
+        .collection("Actions").path}");*/
     QuerySnapshot<Map<String, dynamic>> snap = await db
         .collection("Parents")
         .doc(parentID)
-        .collection("Students")
+        .collection("Learners")
         .doc(learnerScreenName)
         .collection("Actions")
-        .get();
-    final allData = snap.docs.map((doc) => doc.data()).toList();
-    for (final e in allData) {
-      Map<String, dynamic> data = e as Map<String, dynamic>;
-      got.actionList.add(Action.fromMap(data));
+        .get().timeout(Duration(seconds: 30));
+    print(snap.docs.isEmpty);
+    if (snap.docs.isEmpty) {
+      return ActionList.empty();
+    } else {
+      final allData = snap.docs.map((doc) => doc.data()).toList();
+      for (final e in allData) {
+        Map<String, dynamic> data = e;
+        got.actionList.add(Action.fromMap(data));
+      }
+      return got;
     }
-    return got;
   }
 
   void setAction(Action toSave) {
     db
         .collection("Parents")
         .doc(toSave.parentID)
-        .collection("Students")
+        .collection("Learners")
         .doc(toSave.learnerScreenName)
         .collection("Actions")
         .doc(toSave.reason)
@@ -190,7 +213,7 @@ class CloudFirestoreControl {
     return (await db
             .collection("Parents")
             .doc(parentID)
-            .collection("Students")
+            .collection("Learners")
             .doc(learnerScreenName)
             .collection("Actions")
             .doc(reason)
@@ -213,13 +236,13 @@ class CloudFirestoreControl {
     QuerySnapshot<Map<String, dynamic>> snap = await db
         .collection("Parents")
         .doc(parentID)
-        .collection("Students")
+        .collection("Learners")
         .doc(learnerScreenName)
         .collection("History")
         .get();
     final allData = snap.docs.map((doc) => doc.data()).toList();
     for (final e in allData) {
-      Map<String, dynamic> data = e as Map<String, dynamic>;
+      Map<String, dynamic> data = e;
       got.historyList.add(History.fromMap(data));
     }
     return got;
@@ -229,7 +252,7 @@ class CloudFirestoreControl {
     db
         .collection("Parents")
         .doc(toSave.parentID)
-        .collection("Students")
+        .collection("Learners")
         .doc(toSave.learnerScreenName)
         .collection("History")
         .doc(toSave.timestamp)
@@ -244,7 +267,7 @@ class CloudFirestoreControl {
     return (await db
             .collection("Parents")
             .doc(parentID)
-            .collection("Students")
+            .collection("Learners")
             .doc(learnerScreenName)
             .collection("History")
             .doc(timestamp)

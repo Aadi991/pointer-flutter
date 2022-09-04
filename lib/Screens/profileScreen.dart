@@ -57,6 +57,10 @@ class _ProfileState extends State<Profile> {
         setState(() {
           editing = true;
         });
+        if (GlobalVariables.profileFrom == ProfileFrom.SplashPage) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => Home(phoneNo: phoneNo)));
+        }
         currentParent = await control.getParent(phoneNo);
         fullNameController.text = currentParent.fullName;
         screenNameController.text = currentParent.screenName;
@@ -86,322 +90,335 @@ class _ProfileState extends State<Profile> {
         title: Center(child: Text('Profile')),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => Home(phoneNo: phoneNo))),
+          onPressed: () {
+            User current = FirebaseAuth.instance.currentUser!;
+            String phoneNo = current.phoneNumber!;
+            print(phoneNo);
+            phoneNumberController.text = phoneNo;
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => Home(phoneNo: phoneNo)));
+          },
         ),
       ),
       body: SingleChildScrollView(
           child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minHeight: MediaQuery.of(context).size.height,
-        ),
-        child: Column(
-          children: [
-            progress
-                ? Center(child: CircularProgressIndicator())
-                : Container(
-                    margin: EdgeInsets.only(left: 30, top: 75, right: 30),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        children: [
-                          Center(
-                            child: Icon(
-                              Icons.account_circle,
-                              size: 125,
-                              color: Colors.grey,
-                            ),
+            constraints: BoxConstraints(
+              minHeight: MediaQuery
+                  .of(context)
+                  .size
+                  .height,
+            ),
+            child: Column(
+              children: [
+                progress
+                    ? Center(child: CircularProgressIndicator())
+                    : Container(
+                  margin: EdgeInsets.only(left: 30, top: 75, right: 30),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      children: [
+                        Center(
+                          child: Icon(
+                            Icons.account_circle,
+                            size: 125,
+                            color: Colors.grey,
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          collapseStackIndex == 0
-                              ? Column(
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        collapseStackIndex == 0
+                            ? Column(
+                          children: [
+                            userDataStackIndex == 0
+                                ? Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.center,
                                   children: [
-                                    userDataStackIndex == 0
-                                        ? Column(
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    "Full Name:",
-                                                    style: TextStyle(
-                                                      fontSize: 20,
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Expanded(
-                                                    child: Text(
-                                                      fullNameController
-                                                                  .value ==
-                                                              null
-                                                          ? "Unknown"
-                                                          : fullNameController
-                                                              .value.text,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                        fontSize: 20,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  InkWell(
-                                                    child: Icon(Icons.edit,
-                                                        color: Colours.accent,
-                                                        size: 16),
-                                                    onTap: () {
-                                                      setState(() {
-                                                        print(
-                                                            userDataStackIndex);
-                                                        userDataStackIndex =
-                                                            userDataStackIndex ==
-                                                                    0
-                                                                ? 1
-                                                                : 0;
-                                                      });
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                              GetParentData(
-                                                  screenNameController:
-                                                      screenNameController,
-                                                  phoneNumberController:
-                                                      phoneNumberController,
-                                                  ageController: ageController,
-                                                  fullNameController:
-                                                      fullNameController,
-                                                  parentPinController:
-                                                      parentPinController,
-                                                  index: userDataStackIndex)
-                                            ],
-                                          )
-                                        : Column(
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    "Full Name:",
-                                                    style: TextStyle(
-                                                      fontSize: 20,
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Expanded(
-                                                    child: TextField(
-                                                      controller:
-                                                          fullNameController,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        border:
-                                                            OutlineInputBorder(),
-                                                        labelText: "Full Name",
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  InkWell(
-                                                    child: Icon(Icons.edit,
-                                                        color: Colours.accent,
-                                                        size: 16),
-                                                    onTap: () {
-                                                      setState(() {
-                                                        userDataStackIndex =
-                                                            userDataStackIndex ==
-                                                                    0
-                                                                ? 1
-                                                                : 0;
-                                                      });
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                              ViewParentData(
-                                                  screenNameController:
-                                                      screenNameController,
-                                                  phoneNumberController:
-                                                      phoneNumberController,
-                                                  ageController: ageController,
-                                                  parentPinController:
-                                                      parentPinController,
-                                                  index: userDataStackIndex)
-                                            ],
-                                          ),
-                                  ],
-                                )
-                              : Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text("User Data",
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                            )),
-                                      ],
+                                    Text(
+                                      "Full Name:",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        fullNameController
+                                            .value ==
+                                            null
+                                            ? "Unknown"
+                                            : fullNameController
+                                            .value.text,
+                                        overflow:
+                                        TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    InkWell(
+                                      child: Icon(Icons.edit,
+                                          color: Colours.accent,
+                                          size: 16),
+                                      onTap: () {
+                                        setState(() {
+                                          print(
+                                              userDataStackIndex);
+                                          userDataStackIndex =
+                                          userDataStackIndex ==
+                                              0
+                                              ? 1
+                                              : 0;
+                                        });
+                                      },
                                     ),
                                   ],
                                 ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          InkWell(
-                            child: Icon(
-                                collapseStackIndex == 0
-                                    ? Icons.expand_less
-                                    : Icons.expand_more,
-                                color: Colors.grey,
-                                size: 30),
-                            onTap: () {
-                              setState(() {
-                                collapseStackIndex =
-                                    collapseStackIndex == 0 ? 1 : 0;
-                              });
-                            },
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              setState(() {
-                                progress = true;
-                              });
-                              await FirebaseAuth.instance.signOut();
-                              setState(() {
-                                progress = false;
-                              });
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return SplashPage();
-                              }));
-                            },
-                            child: Text(
-                              "Logout",
-                              style:
-                                  TextStyle(fontSize: 20, color: Colors.black),
+                                GetParentData(
+                                    screenNameController:
+                                    screenNameController,
+                                    phoneNumberController:
+                                    phoneNumberController,
+                                    ageController: ageController,
+                                    fullNameController:
+                                    fullNameController,
+                                    parentPinController:
+                                    parentPinController,
+                                    index: userDataStackIndex)
+                              ],
+                            )
+                                : Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Full Name:",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Expanded(
+                                      child: TextField(
+                                        controller:
+                                        fullNameController,
+                                        decoration:
+                                        InputDecoration(
+                                          border:
+                                          OutlineInputBorder(),
+                                          labelText: "Full Name",
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    InkWell(
+                                      child: Icon(Icons.edit,
+                                          color: Colours.accent,
+                                          size: 16),
+                                      onTap: () {
+                                        setState(() {
+                                          userDataStackIndex =
+                                          userDataStackIndex ==
+                                              0
+                                              ? 1
+                                              : 0;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                ViewParentData(
+                                    screenNameController:
+                                    screenNameController,
+                                    phoneNumberController:
+                                    phoneNumberController,
+                                    ageController: ageController,
+                                    parentPinController:
+                                    parentPinController,
+                                    index: userDataStackIndex)
+                              ],
                             ),
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colours.accent),
-                              foregroundColor:
+                          ],
+                        )
+                            : Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment:
+                              MainAxisAlignment.center,
+                              children: [
+                                Text("User Data",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                    )),
+                              ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        InkWell(
+                          child: Icon(
+                              collapseStackIndex == 0
+                                  ? Icons.expand_less
+                                  : Icons.expand_more,
+                              color: Colors.grey,
+                              size: 30),
+                          onTap: () {
+                            setState(() {
+                              collapseStackIndex =
+                              collapseStackIndex == 0 ? 1 : 0;
+                            });
+                          },
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            setState(() {
+                              progress = true;
+                            });
+                            await FirebaseAuth.instance.signOut();
+                            setState(() {
+                              progress = false;
+                            });
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                                  return SplashPage();
+                                }));
+                          },
+                          child: Text(
+                            "Logout",
+                            style:
+                            TextStyle(fontSize: 20, color: Colors.black),
+                          ),
+                          style: ButtonStyle(
+                            backgroundColor:
+                            MaterialStateProperty.all(Colours.accent),
+                            foregroundColor:
+                            MaterialStateProperty.all(Colors.black),
+                            elevation: MaterialStateProperty.all(0),
+                            shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                )),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextButton(
+                                style: ButtonStyle(
+                                  foregroundColor:
                                   MaterialStateProperty.all(Colors.black),
-                              elevation: MaterialStateProperty.all(0),
-                              shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              )),
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: TextButton(
-                                  style: ButtonStyle(
-                                    foregroundColor:
-                                        MaterialStateProperty.all(Colors.black),
-                                    elevation: MaterialStateProperty.all(0),
-                                    shape: MaterialStateProperty.all(
-                                        RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            side: BorderSide(
-                                                color: Colours.accent,
-                                                width: 1))),
-                                  ),
-                                  onPressed: () {
-                                    if (fullNameController.text.isEmpty) {
-                                      showToast('Please enter your full name');
-                                    } else if (screenNameController
-                                        .text.isEmpty) {
-                                      showToast(
-                                          'Please enter your screen name');
-                                    } else if (phoneNumberController
-                                        .text.isEmpty) {
-                                      showToast(
-                                          'Please enter your phone number');
-                                    } else if (ageController.text.isEmpty) {
-                                      showToast('Please enter your age');
-                                    } else {
-                                      setState(() {
-                                        _progress = true;
-                                      });
-                                      if (editing) {
-                                        if (currentParent.phoneNumber !=
-                                            phoneNumberController.text) {
-                                          showToast(
-                                              "If you want to change your phone number please sign in with a different number, you will be redirected to do so");
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      SignIn()));
-                                        } else
-                                          control.updateParent(
-                                              currentParent,
-                                              Parent.withoutLists(
-                                                  fullNameController.text,
-                                                  screenNameController.text,
-                                                  phoneNumberController.text,
-                                                  int.parse(ageController.text),
-                                                  int.parse(parentPinController
-                                                      .text)));
-                                      } else {
-                                        control.setParent(Parent.withoutLists(
-                                            fullNameController.text,
-                                            screenNameController.text,
-                                            phoneNumberController.text,
-                                            int.parse(ageController.text),
-                                            int.parse(
-                                                parentPinController.text)));
+                                  elevation: MaterialStateProperty.all(0),
+                                  shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(10),
+                                          side: BorderSide(
+                                              color: Colours.accent,
+                                              width: 1))),
+                                ),
+                                onPressed: () {
+                                  if (fullNameController.text.isEmpty) {
+                                    showToast('Please enter your full name');
+                                  } else if (screenNameController
+                                      .text.isEmpty) {
+                                    showToast(
+                                        'Please enter your screen name');
+                                  } else if (phoneNumberController
+                                      .text.isEmpty) {
+                                    showToast(
+                                        'Please enter your phone number');
+                                  } else if (ageController.text.isEmpty) {
+                                    showToast('Please enter your age');
+                                  } else {
+                                    setState(() {
+                                      _progress = true;
+                                    });
+                                    if (editing) {
+                                      if (currentParent.phoneNumber !=
+                                          phoneNumberController.text) {
+                                        showToast(
+                                            "If you want to change your phone number please sign in with a different number, you will be redirected to do so");
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    Home(phoneNo: phoneNo)));
-                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>Home(phoneNo: phoneNo)));
-                                      }
+                                                    SignIn()));
+                                      } else
+                                        control.updateParent(
+                                            currentParent,
+                                            Parent.withoutLists(
+                                                fullNameController.text,
+                                                screenNameController.text,
+                                                phoneNumberController.text,
+                                                int.parse(ageController.text),
+                                                int.parse(parentPinController
+                                                    .text)));
+                                    } else {
+                                      control.setParent(Parent.withoutLists(
+                                          fullNameController.text,
+                                          screenNameController.text,
+                                          phoneNumberController.text,
+                                          int.parse(ageController.text),
+                                          int.parse(
+                                              parentPinController.text)));
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  Home(phoneNo: phoneNo)));
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  Home(phoneNo: phoneNo)));
                                     }
-                                    setState(() {
-                                      _progress = false;
-                                    });
-                                  },
-                                  child: Text(
-                                    editing ? "Update" : "Sign Up",
-                                    style: TextStyle(
-                                        fontSize: 20, color: Colors.black),
-                                  ),
+                                  }
+                                  setState(() {
+                                    _progress = false;
+                                  });
+                                },
+                                child: Text(
+                                  editing ? "Update" : "Sign Up",
+                                  style: TextStyle(
+                                      fontSize: 20, color: Colors.black),
                                 ),
-                              )
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              _progress
-                                  ? CircularProgressIndicator()
-                                  : Container(),
-                            ],
-                          )
-                        ],
-                      ),
+                              ),
+                            )
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            _progress
+                                ? CircularProgressIndicator()
+                                : Container(),
+                          ],
+                        )
+                      ],
                     ),
                   ),
-          ],
-        ),
-      )),
+                ),
+              ],
+            ),
+          )),
     );
   }
 }
