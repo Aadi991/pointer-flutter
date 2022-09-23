@@ -11,7 +11,7 @@ class History {
       learnerScreenName = "";
   int points = 0;
 
-  History(this.reason, this.date, this.points);
+  History(this.reason, this.timestamp, this.points);
 
 
   History.full(this.timestamp, this.reason, this.date, this.parentID,
@@ -19,9 +19,9 @@ class History {
 
   History.empty();
 
-  History.calculateTimestamp(String reason, String date, int points) {
+  History.calculateTimestamp(String reason, int points) {
     DateTime now = DateTime.now();
-    DateFormat formatter = DateFormat("HH:mm:ss:SSSS dd/MM/yyyy");
+    DateFormat formatter = DateFormat("HH:mm:ss:SSSS dd-MM-yyyy");
     timestamp = formatter.format(now);
   }
 

@@ -3,7 +3,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Action;
+import 'package:intl/intl.dart';
 import 'package:pointer_v2/Screens/learnerHistoryScreen.dart';
+import 'package:pointer_v2/Storage/StorageStructure/History.dart';
 
 import '../Colours.dart';
 import '../Storage/StorageStructure/Action.dart';
@@ -36,10 +38,30 @@ class _LearnerScreenState extends State<LearnerScreen> {
   @override
   void initState() {
     super.initState();
-    if(!init){
+    if (!init) {
       print("init");
-      original = Learner.withOutLists(widget.clickedLearner.fullName, widget.clickedLearner.screenName, widget.clickedLearner.phoneNumber, widget.clickedLearner.age, widget.clickedLearner.teachersID, widget.clickedLearner.parentsID, widget.clickedLearner.schoolID, widget.clickedLearner.rank, widget.clickedLearner.homePoints, widget.clickedLearner.isBoy);
-      clickedLearner = Learner.withOutLists(widget.clickedLearner.fullName, widget.clickedLearner.screenName, widget.clickedLearner.phoneNumber, widget.clickedLearner.age, widget.clickedLearner.teachersID, widget.clickedLearner.parentsID, widget.clickedLearner.schoolID, widget.clickedLearner.rank, widget.clickedLearner.homePoints, widget.clickedLearner.isBoy);
+      original = Learner.withOutLists(
+          widget.clickedLearner.fullName,
+          widget.clickedLearner.screenName,
+          widget.clickedLearner.phoneNumber,
+          widget.clickedLearner.age,
+          widget.clickedLearner.teachersID,
+          widget.clickedLearner.parentsID,
+          widget.clickedLearner.schoolID,
+          widget.clickedLearner.rank,
+          widget.clickedLearner.homePoints,
+          widget.clickedLearner.isBoy);
+      clickedLearner = Learner.withOutLists(
+          widget.clickedLearner.fullName,
+          widget.clickedLearner.screenName,
+          widget.clickedLearner.phoneNumber,
+          widget.clickedLearner.age,
+          widget.clickedLearner.teachersID,
+          widget.clickedLearner.parentsID,
+          widget.clickedLearner.schoolID,
+          widget.clickedLearner.rank,
+          widget.clickedLearner.homePoints,
+          widget.clickedLearner.isBoy);
       init = true;
     }
     print(original.homePoints);
@@ -55,35 +77,35 @@ class _LearnerScreenState extends State<LearnerScreen> {
             onTap: () {
               print(original.homePoints);
               print(clickedLearner.homePoints);
-              if(original.homePoints != clickedLearner.homePoints){
-              showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                        title: Text("Do you want to save your changes?"),
-                        actions: <Widget>[
-                          TextButton(
-                            child: Text("Yes"),
-                            onPressed: () {
-                              control.updateLearner(clickedLearner, original);
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                            },
-                          ),
-                          TextButton(
-                            child: Text("No"),
-                            onPressed: () {
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                            },
-                          ),
-                          TextButton(
+              if (original.homePoints != clickedLearner.homePoints) {
+                showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                          title: Text("Do you want to save your changes?"),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text("Yes"),
                               onPressed: () {
+                                control.updateLearner(clickedLearner, original);
+                                Navigator.pop(context);
                                 Navigator.pop(context);
                               },
-                              child: Text("Take me back"))
-                        ],
-                      ));
-              }else{
+                            ),
+                            TextButton(
+                              child: Text("No"),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              },
+                            ),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text("Take me back"))
+                          ],
+                        ));
+              } else {
                 Navigator.pop(context);
               }
             },
@@ -111,9 +133,8 @@ class _LearnerScreenState extends State<LearnerScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => EditLearnerScreen(
-                              currentLearner: clickedLearner
-                            )));
+                        builder: (context) =>
+                            EditLearnerScreen(currentLearner: clickedLearner)));
               }
             }, itemBuilder: (BuildContext context) {
               return Options.choices.map((String choice) {
@@ -125,340 +146,121 @@ class _LearnerScreenState extends State<LearnerScreen> {
             })
           ],
         ),
-        body:SingleChildScrollView(
-              child: Column(
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 40,
+              ),
+              Row(
                 children: [
                   SizedBox(
-                    height: 40,
+                    width: 10,
                   ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Image.asset( widget.clickedLearner.isBoy?"images/boy.png":"images/girl.png",
-                          height: imageSize.toDouble(),
-                          width: imageSize.toDouble()),
-                      SizedBox(
-                        width: ((MediaQuery.of(context).size.width) / 16),
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Points:",
-                            style: TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                color: Colours.accent),
-                          ),
-                          Text(
-                            clickedLearner.homePoints.toString(),
-                            style: TextStyle(
-                              fontSize: 30,
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
+                  Image.asset(
+                      widget.clickedLearner.isBoy
+                          ? "images/boy.png"
+                          : "images/girl.png",
+                      height: imageSize.toDouble(),
+                      width: imageSize.toDouble()),
                   SizedBox(
-                    height: 20,
+                    width: ((MediaQuery.of(context).size.width) / 16),
                   ),
-                  Row(children: [
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Image.asset(
-                      'images/ranks/Beginner.png',
-                      height: 120,
-                      width: 120,
-                    ),
-                    SizedBox(
-                      width: ((MediaQuery.of(context).size.width) / 16),
-                    ),
-                    InkWell(
-                      child:
-                          Icon(Icons.history, color: Colours.accent, size: 100),
-                      onTap: () {
-                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                LearnerHistory(
-                                                        clickedLearner:
-                                                            clickedLearner,restorationId: 'main',)));
-                      },
-                    ),
-                  ]),
-                  FutureBuilder<ActionList>(
-                    builder: (BuildContext context,
-                        AsyncSnapshot<ActionList?> snapshot) {
-                      if (snapshot.hasData &&
-                          snapshot.data != null &&
-                          snapshot.connectionState == ConnectionState.done) {
-                        ActionList actions = snapshot.data!;
-                        List<Action> rewards =
-                            List<Action>.empty(growable: true);
-                        List<Action> penalties =
-                            List<Action>.empty(growable: true);
-                        for (var element in actions.actionList) {
-                          if (element.points > 0) {
-                            rewards.add(element);
-                          } else {
-                            penalties.add(element);
-                          }
-                        }
-                        return Column(children: [
-                          Container(
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    child: Column(
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            "Rewards",
-                                            style: TextStyle(
-                                                fontSize: 30,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colours.accent),
-                                            textAlign: TextAlign.left,
-                                          ),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.all(10),
-                                          height: 100,
-                                          child: ListView.separated(
-                                            shrinkWrap: true,
-                                            scrollDirection: Axis.horizontal,
-                                            itemBuilder: (BuildContext context,
-                                                int index) {
-                                              return ((index == rewards.length)
-                                                  ? InkWell(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (BuildContext
-                                                                      context) {
-                                                                return AlertDialog(
-                                                                  title: Text(
-                                                                      "Add Reward"),
-                                                                  content:
-                                                                      SizedBox(
-                                                                    height: 200,
-                                                                    child:
-                                                                        Column(
-                                                                      children: [
-                                                                        TextField(
-                                                                          decoration:
-                                                                              InputDecoration(labelText: "Reason"),
-                                                                          controller:
-                                                                              reasonController,
-                                                                        ),
-                                                                        TextField(
-                                                                          decoration:
-                                                                              InputDecoration(labelText: "Points"),
-                                                                          controller:
-                                                                              pointsController,
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  actions: [
-                                                                    TextButton(
-                                                                      child: Text(
-                                                                          "Cancel"),
-                                                                      onPressed:
-                                                                          () {
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                      },
-                                                                    ),
-                                                                    TextButton(
-                                                                      child: Text(
-                                                                          "Add"),
-                                                                      onPressed:
-                                                                          () {
-                                                                        if (reasonController.text ==
-                                                                                null ||
-                                                                            pointsController.text ==
-                                                                                null) {
-                                                                          showDialog(
-                                                                              context: context,
-                                                                              builder: (BuildContext context) {
-                                                                                return AlertDialog(
-                                                                                  title: Text("Error"),
-                                                                                  content: Text("Please fill in all fields"),
-                                                                                  actions: [
-                                                                                    TextButton(
-                                                                                      child: Text("OK"),
-                                                                                      onPressed: () {
-                                                                                        Navigator.pop(context);
-                                                                                      },
-                                                                                    )
-                                                                                  ],
-                                                                                );
-                                                                              });
-                                                                        } else {
-                                                                          control
-                                                                              .setAction(
-                                                                            Action.full(
-                                                                                reasonController.text,
-                                                                                int.parse(pointsController.text),
-                                                                                widget.clickedLearner.parentsID,
-                                                                                widget.clickedLearner.screenName),
-                                                                          );
-                                                                          setState(
-                                                                              () {
-                                                                            Navigator.pop(context);
-                                                                            rewards.add(Action.full(
-                                                                                reasonController.text,
-                                                                                int.parse(pointsController.text),
-                                                                                widget.clickedLearner.parentsID,
-                                                                                widget.clickedLearner.screenName));
-                                                                            reasonController.clear();
-                                                                            pointsController.clear();
-                                                                          });
-                                                                        }
-                                                                      },
-                                                                    )
-                                                                  ],
-                                                                );
-                                                              });
-                                                        });
-                                                      },
-                                                      child: Icon(
-                                                          Icons.add_circle,
-                                                          color: Colours.accent,
-                                                          size: 100),
-                                                    )
-                                                  : InkWell(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          clickedLearner
-                                                                  .homePoints =
-                                                              clickedLearner
-                                                                      .homePoints +
-                                                                  rewards[index]
-                                                                      .points;
-                                                        });
-                                                      },
-                                                      onLongPress: () {
-                                                        setState(() {
-                                                          rewards
-                                                              .removeAt(index);
-                                                        });
-                                                      },
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                                border:
-                                                                    Border.all(
-                                                                  color: Colors
-                                                                      .black,
-                                                                  width: 1,
-                                                                ),
-                                                                borderRadius: BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            20))),
-                                                        child: Row(
-                                                          children: [
-                                                            SizedBox(
-                                                              width: 10,
-                                                            ),
-                                                            InkWell(
-                                                              child: Icon(
-                                                                Icons.star,
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        166,
-                                                                        255,
-                                                                        215,
-                                                                        0),
-                                                                size: 50,
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              width: ((MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width) /
-                                                                  16),
-                                                            ),
-                                                            Column(
-                                                              children: [
-                                                                Text(
-                                                                  rewards[index]
-                                                                      .points
-                                                                      .toString(),
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          30,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: Colours
-                                                                          .accent),
-                                                                ),
-                                                                Text(
-                                                                  rewards[index]
-                                                                      .reason,
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        20,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            SizedBox(
-                                                              width: 10,
-                                                            )
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ));
-                                            },
-                                            itemCount: rewards.length + 1,
-                                            separatorBuilder:
-                                                (BuildContext context,
-                                                    int index) {
-                                              return SizedBox(
-                                                width: 10,
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            "Penalties",
-                                            style: TextStyle(
-                                                fontSize: 30,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colours.accent),
-                                            textAlign: TextAlign.left,
-                                          ),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.all(10),
-                                          height: 100,
-                                          child: ListView.separated(
-                                            shrinkWrap: true,
-                                            scrollDirection: Axis.horizontal,
-                                            itemBuilder: (BuildContext context,
-                                                int index) {
-                                              if (index == penalties.length) {
-                                                return InkWell(
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Points:",
+                        style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Colours.accent),
+                      ),
+                      Text(
+                        clickedLearner.homePoints.toString(),
+                        style: TextStyle(
+                          fontSize: 30,
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Row(children: [
+                SizedBox(
+                  width: 10,
+                ),
+                Image.asset(
+                  'images/ranks/Beginner.png',
+                  height: 120,
+                  width: 120,
+                ),
+                SizedBox(
+                  width: ((MediaQuery.of(context).size.width) / 16),
+                ),
+                InkWell(
+                  child: Icon(Icons.history, color: Colours.accent, size: 100),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LearnerHistory(
+                                  clickedLearner: clickedLearner,
+                                  restorationId: 'main',
+                                )));
+                  },
+                ),
+              ]),
+              FutureBuilder<ActionList>(
+                builder: (BuildContext context,
+                    AsyncSnapshot<ActionList?> snapshot) {
+                  if (snapshot.hasData &&
+                      snapshot.data != null &&
+                      snapshot.connectionState == ConnectionState.done) {
+                    ActionList actions = snapshot.data!;
+                    List<Action> rewards = List<Action>.empty(growable: true);
+                    List<Action> penalties = List<Action>.empty(growable: true);
+                    for (var element in actions.actionList) {
+                      if (element.points > 0) {
+                        rewards.add(element);
+                      } else {
+                        penalties.add(element);
+                      }
+                    }
+                    return Column(children: [
+                      Container(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                child: Column(
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        "Rewards",
+                                        style: TextStyle(
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colours.accent),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.all(10),
+                                      height: 100,
+                                      child: ListView.separated(
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.horizontal,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return ((index == rewards.length)
+                                              ? InkWell(
                                                   onTap: () {
                                                     setState(() {
                                                       showDialog(
@@ -467,7 +269,7 @@ class _LearnerScreenState extends State<LearnerScreen> {
                                                               context) {
                                                             return AlertDialog(
                                                               title: Text(
-                                                                  "Add Penalty"),
+                                                                  "Add Reward"),
                                                               content: SizedBox(
                                                                 height: 200,
                                                                 child: Column(
@@ -504,28 +306,52 @@ class _LearnerScreenState extends State<LearnerScreen> {
                                                                       "Add"),
                                                                   onPressed:
                                                                       () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                    penalties.add(Action(
+                                                                    if (reasonController.text ==
+                                                                            null ||
+                                                                        pointsController.text ==
+                                                                            null) {
+                                                                      showDialog(
+                                                                          context:
+                                                                              context,
+                                                                          builder:
+                                                                              (BuildContext context) {
+                                                                            return AlertDialog(
+                                                                              title: Text("Error"),
+                                                                              content: Text("Please fill in all fields"),
+                                                                              actions: [
+                                                                                TextButton(
+                                                                                  child: Text("OK"),
+                                                                                  onPressed: () {
+                                                                                    Navigator.pop(context);
+                                                                                  },
+                                                                                )
+                                                                              ],
+                                                                            );
+                                                                          });
+                                                                    } else {
+                                                                      control
+                                                                          .setAction(
+                                                                        Action.full(
+                                                                            reasonController.text,
+                                                                            int.parse(pointsController.text),
+                                                                            widget.clickedLearner.parentsID,
+                                                                            widget.clickedLearner.screenName),
+                                                                      );
+                                                                      setState(
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                        rewards.add(Action.full(
+                                                                            reasonController.text,
+                                                                            int.parse(pointsController.text),
+                                                                            widget.clickedLearner.parentsID,
+                                                                            widget.clickedLearner.screenName));
                                                                         reasonController
-                                                                            .text,
-                                                                        int.parse(
-                                                                            pointsController.text)));
-                                                                    control.setAction(Action.full(
-                                                                        reasonController
-                                                                            .text,
-                                                                        int.parse(pointsController
-                                                                            .text),
-                                                                        widget
-                                                                            .clickedLearner
-                                                                            .parentsID,
-                                                                        widget
-                                                                            .clickedLearner
-                                                                            .screenName));
-                                                                    reasonController
-                                                                        .clear();
-                                                                    pointsController
-                                                                        .clear();
+                                                                            .clear();
+                                                                        pointsController
+                                                                            .clear();
+                                                                      });
+                                                                    }
                                                                   },
                                                                 )
                                                               ],
@@ -536,22 +362,30 @@ class _LearnerScreenState extends State<LearnerScreen> {
                                                   child: Icon(Icons.add_circle,
                                                       color: Colours.accent,
                                                       size: 100),
-                                                );
-                                              } else {
-                                                return InkWell(
+                                                )
+                                              : InkWell(
                                                   onTap: () {
                                                     setState(() {
                                                       clickedLearner
                                                               .homePoints =
                                                           clickedLearner
                                                                   .homePoints +
-                                                              penalties[index]
+                                                              rewards[index]
                                                                   .points;
                                                     });
+                                                    control.setHistory(History.full(
+                                                        DateFormat(
+                                                            "HH:mm:ss:SSSS dd-MM-yyyy")
+                                                            .format(DateTime.now()),
+                                                        rewards[index].reason,
+                                                        "",
+                                                        clickedLearner.parentsID,
+                                                        clickedLearner.screenName,
+                                                        rewards[index].points));
                                                   },
                                                   onLongPress: () {
                                                     setState(() {
-                                                      penalties.removeAt(index);
+                                                      rewards.removeAt(index);
                                                     });
                                                   },
                                                   child: Container(
@@ -569,10 +403,17 @@ class _LearnerScreenState extends State<LearnerScreen> {
                                                         SizedBox(
                                                           width: 10,
                                                         ),
-                                                        Icon(
-                                                          Icons.cancel,
-                                                          color: Colors.red,
-                                                          size: 50,
+                                                        InkWell(
+                                                          child: Icon(
+                                                            Icons.star,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    166,
+                                                                    255,
+                                                                    215,
+                                                                    0),
+                                                            size: 50,
+                                                          ),
                                                         ),
                                                         SizedBox(
                                                           width: ((MediaQuery.of(
@@ -584,7 +425,7 @@ class _LearnerScreenState extends State<LearnerScreen> {
                                                         Column(
                                                           children: [
                                                             Text(
-                                                              penalties[index]
+                                                              rewards[index]
                                                                   .points
                                                                   .toString(),
                                                               style: TextStyle(
@@ -596,7 +437,7 @@ class _LearnerScreenState extends State<LearnerScreen> {
                                                                       .accent),
                                                             ),
                                                             Text(
-                                                              penalties[index]
+                                                              rewards[index]
                                                                   .reason,
                                                               style: TextStyle(
                                                                 fontSize: 20,
@@ -610,36 +451,225 @@ class _LearnerScreenState extends State<LearnerScreen> {
                                                       ],
                                                     ),
                                                   ),
-                                                );
-                                              }
-                                            },
-                                            itemCount: penalties.length + 1,
-                                            separatorBuilder:
-                                                (BuildContext context,
-                                                    int index) {
-                                              return SizedBox(
-                                                width: 10,
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ],
+                                                ));
+                                        },
+                                        itemCount: rewards.length + 1,
+                                        separatorBuilder:
+                                            (BuildContext context, int index) {
+                                          return SizedBox(
+                                            width: 10,
+                                          );
+                                        },
+                                      ),
                                     ),
-                                  )
-                                ],
-                              ))
-                        ]);
-                      } else {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                    },
-                    future: control.getActionList(
-                        widget.clickedLearner.parentsID,
-                        widget.clickedLearner.screenName),
-                  ),
-                ],
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        "Penalties",
+                                        style: TextStyle(
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colours.accent),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.all(10),
+                                      height: 100,
+                                      child: ListView.separated(
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.horizontal,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          if (index == penalties.length) {
+                                            return InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return AlertDialog(
+                                                          title: Text(
+                                                              "Add Penalty"),
+                                                          content: SizedBox(
+                                                            height: 200,
+                                                            child: Column(
+                                                              children: [
+                                                                TextField(
+                                                                  decoration: InputDecoration(
+                                                                      labelText:
+                                                                          "Reason"),
+                                                                  controller:
+                                                                      reasonController,
+                                                                ),
+                                                                TextField(
+                                                                  decoration: InputDecoration(
+                                                                      labelText:
+                                                                          "Points"),
+                                                                  controller:
+                                                                      pointsController,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          actions: [
+                                                            TextButton(
+                                                              child: Text(
+                                                                  "Cancel"),
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                            ),
+                                                            TextButton(
+                                                              child:
+                                                                  Text("Add"),
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                                penalties.add(Action(
+                                                                    reasonController
+                                                                        .text,
+                                                                    int.parse(
+                                                                        pointsController
+                                                                            .text)));
+                                                                control.setAction(Action.full(
+                                                                    reasonController
+                                                                        .text,
+                                                                    int.parse(
+                                                                        pointsController
+                                                                            .text),
+                                                                    widget
+                                                                        .clickedLearner
+                                                                        .parentsID,
+                                                                    widget
+                                                                        .clickedLearner
+                                                                        .screenName));
+                                                                reasonController
+                                                                    .clear();
+                                                                pointsController
+                                                                    .clear();
+                                                              },
+                                                            )
+                                                          ],
+                                                        );
+                                                      });
+                                                });
+                                              },
+                                              child: Icon(Icons.add_circle,
+                                                  color: Colours.accent,
+                                                  size: 100),
+                                            );
+                                          } else {
+                                            return InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  clickedLearner.homePoints =
+                                                      clickedLearner
+                                                              .homePoints +
+                                                          penalties[index]
+                                                              .points;
+                                                });
+                                                control.setHistory(History.full(
+                                                    DateFormat(
+                                                            "HH:mm:ss:SSSS dd-MM-yyyy")
+                                                        .format(DateTime.now()),
+                                                    penalties[index].reason,
+                                                    "",
+                                                    clickedLearner.parentsID,
+                                                    clickedLearner.screenName,
+                                                    penalties[index].points));
+                                              },
+                                              onLongPress: () {
+                                                setState(() {
+                                                  penalties.removeAt(index);
+                                                });
+                                              },
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                      color: Colors.black,
+                                                      width: 1,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                20))),
+                                                child: Row(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Icon(
+                                                      Icons.cancel,
+                                                      color: Colors.red,
+                                                      size: 50,
+                                                    ),
+                                                    SizedBox(
+                                                      width: ((MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width) /
+                                                          16),
+                                                    ),
+                                                    Column(
+                                                      children: [
+                                                        Text(
+                                                          penalties[index]
+                                                              .points
+                                                              .toString(),
+                                                          style: TextStyle(
+                                                              fontSize: 30,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: Colours
+                                                                  .accent),
+                                                        ),
+                                                        Text(
+                                                          penalties[index]
+                                                              .reason,
+                                                          style: TextStyle(
+                                                            fontSize: 20,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        itemCount: penalties.length + 1,
+                                        separatorBuilder:
+                                            (BuildContext context, int index) {
+                                          return SizedBox(
+                                            width: 10,
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ))
+                    ]);
+                  } else {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                },
+                future: control.getActionList(widget.clickedLearner.parentsID,
+                    widget.clickedLearner.screenName),
               ),
-            ));
+            ],
+          ),
+        ));
   }
 
   @override
