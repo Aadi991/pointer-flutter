@@ -65,16 +65,8 @@ class _HomeState extends State<Home> {
                     snapshot.connectionState == ConnectionState.done) {
                   LearnerList learnerList = snapshot.data!;
                   return Container(
-                    height: 650,
-                    child: NotificationListener<UserScrollNotification>(
-                      onNotification: (notification) {
-                        final ScrollDirection direction = notification.direction;
-                        if (direction == ScrollDirection.forward) {
-                          setState(() {});
-                        }
-                        return true;
-                      },
-                      child: ListView.builder(
+                    height: 700,
+                    child: ListView.builder(
                         shrinkWrap: true,
                         itemCount: learnerList.learnerList.length + 1,
                         itemBuilder: (BuildContext context, int index) {
@@ -123,7 +115,6 @@ class _HomeState extends State<Home> {
                           }
                         },
                       ),
-                    ),
                   );
                 } else {
                   return Center(child: CircularProgressIndicator());

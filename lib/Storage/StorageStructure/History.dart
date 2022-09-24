@@ -40,8 +40,8 @@ class History {
     Map<String, dynamic> data,
   ) {
     return History(
-        data[CloudFirestoreControl.keyTimestamp],
         data[CloudFirestoreControl.keyReason],
+        data[CloudFirestoreControl.keyTimestamp],
         data[CloudFirestoreControl.keyValue]);
   }
 
