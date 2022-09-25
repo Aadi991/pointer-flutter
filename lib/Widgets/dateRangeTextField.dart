@@ -13,6 +13,8 @@ class DateRangeTextField extends StatefulWidget {
 
   Function()? selectDate;
 
+  Function()? cancel;
+
   bool isStartDate;
 
   DateRangeTextField(
@@ -22,14 +24,16 @@ class DateRangeTextField extends StatefulWidget {
       required this.startDateController,
       required this.endDateController,
       required this.isStartDate,
-      this.selectDate})
+      this.selectDate,
+      this.cancel})
       : super(key: key);
 
   @override
   State<DateRangeTextField> createState() => _DateRangeTextFieldState();
 }
 
-class _DateRangeTextFieldState extends State<DateRangeTextField> with RestorationMixin {
+class _DateRangeTextFieldState extends State<DateRangeTextField>
+    with RestorationMixin {
   @override
   String? get restorationId => widget.restorationId;
 
@@ -55,8 +59,10 @@ class _DateRangeTextFieldState extends State<DateRangeTextField> with Restoratio
       setState(() {
         _startDate.value = newSelectedDate.start;
         _endDate.value = newSelectedDate.end;
-        widget.startDateController.text = DateFormat("dd/MM/yyyy").format(_startDate.value!);
-        widget.endDateController.text = DateFormat("dd/MM/yyyy").format(_endDate.value!);
+        widget.startDateController.text =
+            DateFormat("dd/MM/yyyy").format(_startDate.value!);
+        widget.endDateController.text =
+            DateFormat("dd/MM/yyyy").format(_endDate.value!);
       });
       widget.selectDate!();
     }
@@ -107,10 +113,25 @@ class _DateRangeTextFieldState extends State<DateRangeTextField> with Restoratio
   Widget build(BuildContext context) {
     return TextField(
       readOnly: true,
-      controller: widget.isStartDate? widget.startDateController : widget.endDateController,
+      controller: widget.isStartDate
+          ? widget.startDateController
+          : widget.endDateController,
       onTap: () {
         _restorableDateRangePickerRouteFuture.present();
       },
+      decoration: InputDecoration(
+          suffixIcon: InkWell(
+        child: Icon(
+          Icons.cancel,
+          size: 30,
+          color: Colors.red,
+        ),
+        onTap: () {
+          widget.startDateController.clear();
+          widget.endDateController.clear();
+          widget.cancel!();
+        },
+      )),
     );
   }
 }

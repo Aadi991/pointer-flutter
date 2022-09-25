@@ -12,12 +12,15 @@ class DateTextField extends StatefulWidget {
 
   Function()? selectDate;
 
+  Function()? cancel;
+
   DateTextField(
       {Key? key,
       required this.restorationId,
       required this.selectedDate,
       required this.dateController,
-      this.selectDate})
+      this.selectDate,
+      this.cancel})
       : super(key: key);
 
   @override
@@ -25,7 +28,6 @@ class DateTextField extends StatefulWidget {
 }
 
 class _DateTextFieldState extends State<DateTextField> with RestorationMixin {
-
   @override
   String? get restorationId => widget.restorationId;
 
@@ -38,17 +40,16 @@ class _DateTextFieldState extends State<DateTextField> with RestorationMixin {
         widget.dateController.text =
             DateFormat("dd/MM/yyyy").format(_selectedDate.value);
         print(
-            'Selected: ${_selectedDate.value.day}/${_selectedDate.value
-                .month}/${_selectedDate.value.year}');
+            'Selected: ${_selectedDate.value.day}/${_selectedDate.value.month}/${_selectedDate.value.year}');
       });
       widget.selectDate!();
     }
   }
 
   static Route<DateTime> _datePickerRoute(
-      BuildContext context,
-      Object? arguments,
-      ) {
+    BuildContext context,
+    Object? arguments,
+  ) {
     return DialogRoute<DateTime>(
       context: context,
       builder: (BuildContext context) {
@@ -74,8 +75,6 @@ class _DateTextFieldState extends State<DateTextField> with RestorationMixin {
     },
   );
 
-
-
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
     registerForRestoration(_selectedDate, 'selected_date');
@@ -91,6 +90,18 @@ class _DateTextFieldState extends State<DateTextField> with RestorationMixin {
       onTap: () {
         _restorableDatePickerRouteFuture.present();
       },
+      decoration: InputDecoration(
+          suffixIcon: InkWell(
+        child: Icon(
+          Icons.cancel,
+          size: 30,
+          color: Colors.red,
+        ),
+        onTap: () {
+          widget.dateController.clear();
+          widget.cancel!();
+        },
+      )),
     );
   }
 }

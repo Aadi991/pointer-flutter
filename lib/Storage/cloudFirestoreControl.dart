@@ -262,6 +262,17 @@ class CloudFirestoreControl {
         .set(toSave);
   }
 
+  void deleteHistory(History toSave) {
+    db
+        .collection("Parents")
+        .doc(toSave.parentID)
+        .collection("Learners")
+        .doc(toSave.learnerScreenName)
+        .collection("History")
+        .doc(toSave.timestamp)
+        .delete();
+  }
+
   Future<History> getHistory(
       String parentID, String learnerScreenName, String timestamp) async {
     return (await db
